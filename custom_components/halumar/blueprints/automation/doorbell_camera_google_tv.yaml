@@ -1,0 +1,121 @@
+blueprint:
+  name: "Doorbell: show a camera on an Android TV or Google TV"
+  description: >-
+    When the doorbell rings, opens Halumar on an Android TV or Google TV with
+    the chosen camera. Uses Home Assistant's Android TV Remote integration
+    (action remote.turn_on with an activity) to open the link
+    /open/camera/<camera>. A streamer in standby wakes up and usually turns
+    the TV on over HDMI-CEC. The link only opens the camera view and switches
+    nothing; the TV's profile still decides whether the camera is visible and
+    whether it shows a live image.
+  domain: automation
+  author: Halumar
+  homeassistant:
+    min_version: "2025.11.0"
+  input:
+    doorbell:
+      name: "Doorbell"
+      description: >-
+        Doorbell event entity, or a binary sensor that turns on when the
+        doorbell rings.
+      selector:
+        entity:
+          filter:
+            - domain: event
+            - domain: binary_sensor
+    camera:
+      name: "Camera"
+      description: "Camera to show. It must be in an area the TV can see."
+      selector:
+        entity:
+          filter:
+            - domain: camera
+    tv_remote:
+      name: "TV"
+      description: "Remote entity of the Android TV Remote integration."
+      selector:
+        entity:
+          filter:
+            - integration: androidtv_remote
+              domain: remote
+    only_when_on:
+      name: "Only when the TV is on"
+      description: >-
+        On: does nothing while the TV is in standby. Off: also wakes the TV
+        from standby.
+      default: false
+      selector:
+        boolean: {}
+    advanced:
+      name: "Advanced"
+      icon: mdi:cog
+      collapsed: true
+      input:
+        link_form:
+          name: "Link"
+          description: >-
+            "Website" (https://…/open/…) is the preferred form; it opens the app
+            only where Android has verified the app's links to the website. "App"
+            (halumar://open/…) opens Halumar directly on every Android TV device.
+          default: website
+          selector:
+            select:
+              options:
+                - label: "Website (https://…/open/…)"
+                  value: website
+                - label: "App (halumar://open/…)"
+                  value: app
+        website:
+          name: "Halumar website"
+          description: "Change this only if the app uses another website."
+          default: "https://halumar.com"
+          selector:
+            text: {}
+        cooldown:
+          name: "Pause after opening"
+          description: "Ringing again within this time does not open the camera again."
+          default: 30
+          selector:
+            number:
+              min: 0
+              max: 300
+              step: 5
+              unit_of_measurement: s
+
+mode: single
+max_exceeded: silent
+
+variables:
+  doorbell: !input doorbell
+  camera: !input camera
+  tv: !input tv_remote
+  only_when_on: !input only_when_on
+  link_form: !input link_form
+  website: !input website
+  link: >-
+    {{ ('halumar://open' if link_form == 'app' else website.rstrip('/') ~ '/open')
+       ~ '/camera/' ~ camera }}
+
+triggers:
+  - trigger: state
+    entity_id: !input doorbell
+
+conditions:
+  # Event entities change their state (a time stamp) on every ring; binary sensors turn on.
+  - condition: template
+    value_template: >-
+      {{ trigger.to_state is not none
+         and trigger.to_state.state not in ['unavailable', 'unknown']
+         and (trigger.from_state is none or trigger.from_state.state not in ['unavailable'])
+         and (doorbell.startswith('event.') or trigger.to_state.state == 'on') }}
+  - condition: template
+    value_template: "{{ not only_when_on or is_state(tv, 'on') }}"
+
+actions:
+  - action: remote.turn_on
+    target:
+      entity_id: !input tv_remote
+    data:
+      activity: "{{ link }}"
+  - delay:
+      seconds: !input cooldown

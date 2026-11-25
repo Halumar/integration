@@ -1,0 +1,80 @@
+# Quality scale self-assessment of the Halumar integration.
+# Custom integrations have no tier; the rules are followed as a guide
+# (contributors.home-assistant.io/core/quality-scale). Every rule is listed;
+# "docs-*" rules refer to README.md and the pages in docs/.
+rules:
+  # Bronze
+  action-setup: done
+  appropriate-polling:
+    status: done
+    comment: 30 s REST poll; 300 s safety poll while the WebSocket push channel is up.
+  brands:
+    status: done
+    comment: brand/ ships icon and logo with dark variants (Home Assistant 2026.3+); brands/ holds the same files for older releases.
+  common-modules: done
+  config-flow: done
+  config-flow-test-coverage: done
+  dependency-transparency:
+    status: exempt
+    comment: The integration has no requirements; it talks HTTP/WebSocket to the Hub with aiohttp from Home Assistant.
+  docs-actions: done
+  docs-conditions:
+    status: exempt
+    comment: The integration provides no conditions.
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  docs-triggers:
+    status: exempt
+    comment: The integration provides no trigger platform; its bus events are documented under Events.
+  entity-event-setup: done
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure: done
+  test-before-setup: done
+  unique-config-entry: done
+
+  # Silver
+  action-exceptions: done
+  config-entry-unloading: done
+  docs-configuration-parameters: done
+  docs-installation-parameters: done
+  entity-unavailable: done
+  integration-owner: done
+  log-when-unavailable: done
+  parallel-updates: done
+  reauthentication-flow: done
+  test-coverage: done
+
+  # Gold
+  devices: done
+  diagnostics: done
+  discovery: done
+  discovery-update-info: done
+  docs-data-update: done
+  docs-examples: done
+  docs-known-limitations: done
+  docs-supported-devices: done
+  docs-supported-functions: done
+  docs-troubleshooting: done
+  docs-use-cases: done
+  dynamic-devices: done
+  entity-category: done
+  entity-device-class: done
+  entity-disabled-by-default: done
+  entity-translations: done
+  exception-translations: done
+  icon-translations: done
+  reconfiguration-flow: done
+  repair-issues: done
+  stale-devices: done
+
+  # Platinum
+  async-dependency:
+    status: exempt
+    comment: No external dependencies; the client code is async (aiohttp) and part of the integration.
+  inject-websession: done
+  strict-typing:
+    status: done
+    comment: mypy --strict in CI (pyproject.toml); a custom integration cannot be listed in .strict-typing of core.

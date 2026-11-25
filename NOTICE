@@ -1,0 +1,18 @@
+Halumar integration for Home Assistant
+Copyright 2026 xonatec
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+custom_components/halumar/brand.py is generated from Halumar/contracts
+(Copyright 2026 xonatec, Apache License 2.0).
+
+Third-party components: none. The integration ships no third-party code, icons
+or fonts; its runtime requirements in manifest.json are empty
+(scripts/ci/check-licenses.py keeps this file in step with the manifest).
+
+"Halumar" and the Halumar logo are trademarks of xonatec. The license does not
+grant trademark rights; see TRADEMARKS.md. The logo and icon images in
+docs/images/brand/, custom_components/halumar/brand/ and brands/ are such
+trademarks; the wordmark contains glyphs of the Fredoka typeface (SIL Open Font
+License 1.1), converted to outlines. No font files are included. Home Assistant
+is a trademark of the Open Home Foundation.

@@ -1,0 +1,26 @@
+# Test dependencies for the Halumar integration test suite ("current" CI
+# matrix entry). The minimum supported HA release is tested with
+# requirements_test_min.txt.
+#
+# pytest-homeassistant is published by Home Assistant Core in lock-step with
+# homeassistant and pins the identical version. It replaces the discontinued
+# pytest-homeassistant-custom-component (last release 0.13.375 -> HA 2026.10.4).
+# Requires Python >= 3.14.2.
+pytest-homeassistant==2026.11.2
+
+# HTTP mocking that intercepts aiohttp.ClientSession._request, covering both
+# the coordinator's own ClientSession and the shared HA client session used
+# by the config flow.
+# Why a fork: the latest aioresponses release (0.7.9) fails with
+# aiohttp >= 3.14 (ClientResponse "stream_writer" keyword,
+# pnuckowski/aioresponses#289). The fix is the unmerged pull request
+# pnuckowski/aioresponses#292; its commit is installed from the fork it comes
+# from, pinned by SHA. Replace this line with "aioresponses==<version>" once
+# a release contains that fix. Dependabot does not update git pins.
+aioresponses @ git+https://github.com/kleine-safie/aioresponses@1a48e1f898035e3bedc981f06520842c55977706
+
+# Since HA 2026.11 the camera component imports stream at module level, which
+# needs these (versions from homeassistant/components/stream/manifest.json).
+PyTurboJPEG==1.8.3
+av==19.0.0
+numpy==2.3.2

@@ -1,0 +1,1792 @@
+{
+  "version": 2,
+  "limits": {
+    "max_entities": 50,
+    "max_data_fields": 20,
+    "max_calls_per_minute": 120
+  },
+  "forbidden_fields": [
+    "entity_id",
+    "device_id",
+    "area_id",
+    "floor_id",
+    "label_id",
+    "target",
+    "group_members",
+    "entities",
+    "snapshot_entities",
+    "variables",
+    "media_content_id",
+    "media_content_type",
+    "enqueue",
+    "announce"
+  ],
+  "own_entities": "blocked",
+  "run_targets": {
+    "domains": [
+      {
+        "domain": "scene",
+        "actions": [
+          "turn_on"
+        ]
+      },
+      {
+        "domain": "script",
+        "actions": [
+          "turn_on",
+          "toggle"
+        ]
+      }
+    ],
+    "max_depth": 3,
+    "read_only_domains": [
+      "air_quality",
+      "binary_sensor",
+      "calendar",
+      "device_tracker",
+      "event",
+      "geo_location",
+      "image",
+      "person",
+      "sensor",
+      "sun",
+      "weather",
+      "zone"
+    ]
+  },
+  "domains": [
+    {
+      "domain": "light",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "brightness",
+              "type": "integer",
+              "min": 0,
+              "max": 255,
+              "class": null
+            },
+            {
+              "name": "brightness_pct",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            },
+            {
+              "name": "brightness_step",
+              "type": "integer",
+              "min": -255,
+              "max": 255,
+              "class": null
+            },
+            {
+              "name": "brightness_step_pct",
+              "type": "integer",
+              "min": -100,
+              "max": 100,
+              "class": null
+            },
+            {
+              "name": "color_temp_kelvin",
+              "type": "integer",
+              "min": 1000,
+              "max": 20000,
+              "class": null
+            },
+            {
+              "name": "hs_color",
+              "type": "number_list",
+              "min": 0,
+              "max": 360,
+              "min_items": 2,
+              "max_items": 2,
+              "class": "color"
+            },
+            {
+              "name": "rgb_color",
+              "type": "integer_list",
+              "min": 0,
+              "max": 255,
+              "min_items": 3,
+              "max_items": 3,
+              "class": "color"
+            },
+            {
+              "name": "rgbw_color",
+              "type": "integer_list",
+              "min": 0,
+              "max": 255,
+              "min_items": 4,
+              "max_items": 4,
+              "class": "color"
+            },
+            {
+              "name": "rgbww_color",
+              "type": "integer_list",
+              "min": 0,
+              "max": 255,
+              "min_items": 5,
+              "max_items": 5,
+              "class": "color"
+            },
+            {
+              "name": "xy_color",
+              "type": "number_list",
+              "min": 0,
+              "max": 1,
+              "min_items": 2,
+              "max_items": 2,
+              "class": "color"
+            },
+            {
+              "name": "color_name",
+              "type": "string",
+              "max_length": 64,
+              "class": "color"
+            },
+            {
+              "name": "white",
+              "type": "integer",
+              "min": 0,
+              "max": 255,
+              "class": null
+            },
+            {
+              "name": "effect",
+              "type": "string",
+              "max_length": 255,
+              "class": "color"
+            },
+            {
+              "name": "flash",
+              "type": "enum",
+              "values": [
+                "short",
+                "long"
+              ],
+              "class": "color"
+            },
+            {
+              "name": "transition",
+              "type": "number",
+              "min": 0,
+              "max": 300,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": [
+            {
+              "name": "transition",
+              "type": "number",
+              "min": 0,
+              "max": 300,
+              "class": null
+            },
+            {
+              "name": "flash",
+              "type": "enum",
+              "values": [
+                "short",
+                "long"
+              ],
+              "class": "color"
+            }
+          ]
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "brightness",
+              "type": "integer",
+              "min": 0,
+              "max": 255,
+              "class": null
+            },
+            {
+              "name": "brightness_pct",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            },
+            {
+              "name": "brightness_step",
+              "type": "integer",
+              "min": -255,
+              "max": 255,
+              "class": null
+            },
+            {
+              "name": "brightness_step_pct",
+              "type": "integer",
+              "min": -100,
+              "max": 100,
+              "class": null
+            },
+            {
+              "name": "color_temp_kelvin",
+              "type": "integer",
+              "min": 1000,
+              "max": 20000,
+              "class": null
+            },
+            {
+              "name": "hs_color",
+              "type": "number_list",
+              "min": 0,
+              "max": 360,
+              "min_items": 2,
+              "max_items": 2,
+              "class": "color"
+            },
+            {
+              "name": "rgb_color",
+              "type": "integer_list",
+              "min": 0,
+              "max": 255,
+              "min_items": 3,
+              "max_items": 3,
+              "class": "color"
+            },
+            {
+              "name": "rgbw_color",
+              "type": "integer_list",
+              "min": 0,
+              "max": 255,
+              "min_items": 4,
+              "max_items": 4,
+              "class": "color"
+            },
+            {
+              "name": "rgbww_color",
+              "type": "integer_list",
+              "min": 0,
+              "max": 255,
+              "min_items": 5,
+              "max_items": 5,
+              "class": "color"
+            },
+            {
+              "name": "xy_color",
+              "type": "number_list",
+              "min": 0,
+              "max": 1,
+              "min_items": 2,
+              "max_items": 2,
+              "class": "color"
+            },
+            {
+              "name": "color_name",
+              "type": "string",
+              "max_length": 64,
+              "class": "color"
+            },
+            {
+              "name": "white",
+              "type": "integer",
+              "min": 0,
+              "max": 255,
+              "class": null
+            },
+            {
+              "name": "effect",
+              "type": "string",
+              "max_length": 255,
+              "class": "color"
+            },
+            {
+              "name": "flash",
+              "type": "enum",
+              "values": [
+                "short",
+                "long"
+              ],
+              "class": "color"
+            },
+            {
+              "name": "transition",
+              "type": "number",
+              "min": 0,
+              "max": 300,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "switch",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "input_boolean",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "fan",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "percentage",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            },
+            {
+              "name": "preset_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "set_percentage",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "percentage",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "increase_speed",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "percentage_step",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "decrease_speed",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "percentage_step",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "oscillate",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "oscillating",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_direction",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "direction",
+              "type": "enum",
+              "values": [
+                "forward",
+                "reverse"
+              ],
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_preset_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "preset_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "humidifier",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "set_humidity",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "humidity",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "cover",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "open_cover",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "close_cover",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "stop_cover",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "set_cover_position",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "position",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "open_cover_tilt",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "close_cover_tilt",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "stop_cover_tilt",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "toggle_cover_tilt",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "set_cover_tilt_position",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "tilt_position",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "climate",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "set_temperature",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "temperature",
+              "type": "number",
+              "min": -100,
+              "max": 200,
+              "class": null
+            },
+            {
+              "name": "target_temp_high",
+              "type": "number",
+              "min": -100,
+              "max": 200,
+              "class": null
+            },
+            {
+              "name": "target_temp_low",
+              "type": "number",
+              "min": -100,
+              "max": 200,
+              "class": null
+            },
+            {
+              "name": "hvac_mode",
+              "type": "enum",
+              "values": [
+                "off",
+                "heat",
+                "cool",
+                "heat_cool",
+                "auto",
+                "dry",
+                "fan_only"
+              ],
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_hvac_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "hvac_mode",
+              "type": "enum",
+              "values": [
+                "off",
+                "heat",
+                "cool",
+                "heat_cool",
+                "auto",
+                "dry",
+                "fan_only"
+              ],
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_preset_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "preset_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_fan_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "fan_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_humidity",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "humidity",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_swing_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "swing_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_swing_horizontal_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "swing_horizontal_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "water_heater",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "set_temperature",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "temperature",
+              "type": "number",
+              "min": -100,
+              "max": 200,
+              "class": null
+            },
+            {
+              "name": "operation_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_operation_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "operation_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "set_away_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "away_mode",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "media_player",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "volume_set",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "volume_level",
+              "type": "number",
+              "min": 0,
+              "max": 1,
+              "class": "volume"
+            }
+          ]
+        },
+        {
+          "action": "volume_up",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "volume_down",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "volume_mute",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "is_volume_muted",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "media_play",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "media_pause",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "media_play_pause",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "media_stop",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "media_next_track",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "media_previous_track",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "media_seek",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "seek_position",
+              "type": "number",
+              "min": 0,
+              "max": 86400,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "select_source",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "source",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "select_sound_mode",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "sound_mode",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "shuffle_set",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "shuffle",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "repeat_set",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "repeat",
+              "type": "enum",
+              "values": [
+                "off",
+                "all",
+                "one"
+              ],
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "lock",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "lock",
+          "safe": true,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "unlock",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "open",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "alarm_control_panel",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "alarm_arm_away",
+          "safe": true,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "alarm_arm_home",
+          "safe": true,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "alarm_arm_night",
+          "safe": true,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "alarm_arm_vacation",
+          "safe": true,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "alarm_arm_custom_bypass",
+          "safe": true,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "alarm_disarm",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        },
+        {
+          "action": "alarm_trigger",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "code",
+              "type": "string",
+              "max_length": 64,
+              "class": "code"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "scene",
+      "release_required": true,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "transition",
+              "type": "number",
+              "min": 0,
+              "max": 300,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "script",
+      "release_required": true,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "automation",
+      "release_required": true,
+      "actions": [
+        {
+          "action": "trigger",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "skip_condition",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": [
+            {
+              "name": "stop_actions",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "button",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "press",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "input_button",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "press",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "input_number",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_value",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "value",
+              "type": "number",
+              "min": -1000000,
+              "max": 1000000,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "increment",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "decrement",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "number",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_value",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "value",
+              "type": "number",
+              "min": -1000000,
+              "max": 1000000,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "input_select",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "select_option",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "option",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "select_first",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "select_last",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "select_next",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "cycle",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "select_previous",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "cycle",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "select",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "select_option",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "option",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "select_first",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "select_last",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "select_next",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "cycle",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "select_previous",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "cycle",
+              "type": "boolean",
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "input_text",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_value",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "value",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "text",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_value",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "value",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "input_datetime",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_datetime",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "date",
+              "type": "date",
+              "class": null
+            },
+            {
+              "name": "time",
+              "type": "time",
+              "class": null
+            },
+            {
+              "name": "datetime",
+              "type": "datetime",
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "date",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_value",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "date",
+              "type": "date",
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "time",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_value",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "time",
+              "type": "time",
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "datetime",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "set_value",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "datetime",
+              "type": "datetime",
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "vacuum",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "start",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "pause",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "stop",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "return_to_base",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "locate",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "clean_spot",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "set_fan_speed",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "fan_speed",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "lawn_mower",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "start_mowing",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "pause",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "dock",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "valve",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "open_valve",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "close_valve",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "stop_valve",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "set_valve_position",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "position",
+              "type": "integer",
+              "min": 0,
+              "max": 100,
+              "class": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "domain": "siren",
+      "release_required": false,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "tone",
+              "type": "string",
+              "max_length": 64,
+              "class": null
+            },
+            {
+              "name": "volume_level",
+              "type": "number",
+              "min": 0,
+              "max": 1,
+              "class": null
+            },
+            {
+              "name": "duration",
+              "type": "integer",
+              "min": 0,
+              "max": 3600,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        }
+      ]
+    },
+    {
+      "domain": "remote",
+      "release_required": true,
+      "actions": [
+        {
+          "action": "turn_on",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "activity",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            }
+          ]
+        },
+        {
+          "action": "turn_off",
+          "safe": false,
+          "reduces": true,
+          "fields": []
+        },
+        {
+          "action": "toggle",
+          "safe": false,
+          "reduces": false,
+          "fields": []
+        },
+        {
+          "action": "send_command",
+          "safe": false,
+          "reduces": false,
+          "fields": [
+            {
+              "name": "command",
+              "type": "string_list",
+              "min_items": 1,
+              "max_items": 20,
+              "max_length": 255,
+              "class": null
+            },
+            {
+              "name": "device",
+              "type": "string",
+              "max_length": 255,
+              "class": null
+            },
+            {
+              "name": "num_repeats",
+              "type": "integer",
+              "min": 1,
+              "max": 20,
+              "class": null
+            },
+            {
+              "name": "delay_secs",
+              "type": "number",
+              "min": 0,
+              "max": 60,
+              "class": null
+            },
+            {
+              "name": "hold_secs",
+              "type": "number",
+              "min": 0,
+              "max": 60,
+              "class": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

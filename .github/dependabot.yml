@@ -1,0 +1,43 @@
+version: 2
+
+# Updates land on develop (integration branch); main only receives releases.
+updates:
+  # requirements_test.txt pins pytest-homeassistant == the current HA release:
+  # its monthly bump moves the "current" CI entry. The "min"
+  # entry (requirements_test_min.txt) is pinned to the declared minimum HA and
+  # must not follow upstream.
+  - package-ecosystem: pip
+    directories:
+      - /
+      - /.github
+    target-branch: develop
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps)"
+    ignore:
+      # Minimum-HA harness and its compatibility pins (requirements_test_min.txt).
+      - dependency-name: "pytest-homeassistant-custom-component"
+      - dependency-name: "pycares"
+      - dependency-name: "aioresponses"
+    groups:
+      ha-harness:
+        patterns: ["pytest-homeassistant", "numpy", "av", "PyTurboJPEG"]
+      tooling:
+        patterns: ["ruff", "mypy"]
+
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /.github/actions/contracts
+    target-branch: develop
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      actions:
+        patterns: ["*"]

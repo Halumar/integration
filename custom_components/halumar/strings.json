@@ -1,0 +1,904 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to the Halumar Hub",
+        "description": "Enter the connection details of the Halumar Hub app. Usually you do not need this form: Home Assistant discovers the hub by itself. Every paired device gets its own non-admin Home Assistant user named \"Halumar · device name\"; remove devices in the Halumar Hub, not in the user list.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "api_token": "Integration token",
+          "use_ssl": "Use HTTPS"
+        },
+        "data_description": {
+          "host": "Host name or IP address of the Halumar Hub, for example 192.0.2.10. The hub on this Home Assistant system is found by itself.",
+          "port": "Port of the hub API. Default: 8099.",
+          "api_token": "Integration token of the Halumar Hub. The hub creates a new one at every start and hands it to Home Assistant by itself.",
+          "use_ssl": "Connect with HTTPS instead of HTTP. Leave off for the hub on this Home Assistant system."
+        }
+      },
+      "hassio_confirm": {
+        "title": "Halumar Hub discovered",
+        "description": "Do you want to connect Home Assistant to {addon} (version {version})? The connection details and the token come from the hub and stay up to date by themselves. Every paired device gets its own non-admin Home Assistant user named \"Halumar · device name\"."
+      },
+      "reauth_confirm": {
+        "title": "Reconnect to the Halumar Hub",
+        "description": "The Halumar Hub at {host} rejected the stored integration token. Restart the Halumar Hub app (it then hands Home Assistant a new token by itself), or enter the current token here.",
+        "data": {
+          "api_token": "Integration token"
+        },
+        "data_description": {
+          "api_token": "Current integration token of the Halumar Hub."
+        }
+      },
+      "reconfigure": {
+        "title": "Change the connection",
+        "description": "Change how Home Assistant reaches the Halumar Hub (currently {host}). The settings are tested before they are saved.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "api_token": "Integration token",
+          "use_ssl": "Use HTTPS"
+        },
+        "data_description": {
+          "host": "Host name or IP address of the Halumar Hub.",
+          "port": "Port of the hub API. Default: 8099.",
+          "api_token": "Leave empty to keep the stored token.",
+          "use_ssl": "Connect with HTTPS instead of HTTP. Leave off for the hub on this Home Assistant system."
+        }
+      },
+      "other_hub": {
+        "title": "This is a different Halumar Hub",
+        "description": "{host} answers as a different Halumar Hub than the one this entry was set up with (for example after the app was reinstalled without a backup). If you continue, Home Assistant takes this hub: the devices and device users of the previous hub that this hub does not know are removed. Cancel to keep everything as it is."
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the Halumar Hub. Check host and port, and that the Halumar Hub app is running.",
+      "invalid_auth": "The Halumar Hub rejected the integration token.",
+      "invalid_host": "Invalid host. Use a host name, an IPv4 or an IPv6 address.",
+      "invalid_port": "The port must be between 1 and 65535.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "The Halumar Hub is already set up. Only one Halumar entry is supported.",
+      "reauth_successful": "Reconnected successfully.",
+      "reconfigure_successful": "The connection was changed.",
+      "invalid_discovery_info": "The discovery data of the Halumar Hub was incomplete or invalid.",
+      "other_hub_confirmed": "The new Halumar Hub was taken."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Halumar options",
+        "description": "To change host, port or token, use Reconfigure in the menu of the integration entry.",
+        "data": {
+          "guest_button_all_areas": "Guest pairing button: share all areas"
+        },
+        "data_description": {
+          "guest_button_all_areas": "Guests paired with the Start guest pairing button see all areas. Off: they see no area until you share areas in the Halumar Hub."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "version": {
+        "name": "Version"
+      },
+      "areas": {
+        "name": "Areas"
+      },
+      "connected_clients": {
+        "name": "Connected devices"
+      },
+      "guests": {
+        "name": "Guests"
+      },
+      "area": {
+        "name": "Area: {area_name}"
+      },
+      "current_area": {
+        "name": "Current area",
+        "state": {
+          "home": "Home"
+        }
+      },
+      "device_name": {
+        "name": "Device name"
+      },
+      "app_version": {
+        "name": "App version"
+      },
+      "connection_type": {
+        "name": "Connection type"
+      },
+      "last_seen": {
+        "name": "Last seen"
+      },
+      "notifications": {
+        "name": "Notifications"
+      },
+      "panel_screen": {
+        "name": "Panel screen",
+        "state": {
+          "active": "Active",
+          "dimmed": "Dimmed",
+          "screensaver": "Screensaver",
+          "night": "Night",
+          "off": "Off"
+        }
+      },
+      "panel_brightness": {
+        "name": "Screen brightness"
+      },
+      "battery_temperature": {
+        "name": "Battery temperature",
+        "state_attributes": {
+          "battery_health": {
+            "name": "Battery health"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "pairing_active": {
+        "name": "Pairing active"
+      },
+      "connected": {
+        "name": "Connected"
+      },
+      "charging": {
+        "name": "Charging"
+      },
+      "app_active": {
+        "name": "App active"
+      }
+    },
+    "button": {
+      "start_pairing": {
+        "name": "Start pairing"
+      },
+      "start_guest_pairing": {
+        "name": "Start guest pairing"
+      },
+      "cancel_pairing": {
+        "name": "Cancel pairing"
+      },
+      "panel_wake": {
+        "name": "Wake panel"
+      },
+      "panel_screensaver": {
+        "name": "Panel screensaver"
+      },
+      "panel_home": {
+        "name": "Panel start area"
+      },
+      "panel_reload": {
+        "name": "Reload panel"
+      }
+    },
+    "camera": {
+      "pairing_qr_code": {
+        "name": "Pairing status",
+        "state_attributes": {
+          "qr_mode": {
+            "name": "QR code",
+            "state": {
+              "off": "Off",
+              "guests": "Guest pairing only",
+              "all": "Every pairing"
+            }
+          }
+        }
+      }
+    },
+    "switch": {
+      "area": {
+        "name": "Area: {area_name}"
+      },
+      "access": {
+        "name": "Access"
+      }
+    },
+    "datetime": {
+      "guest_expiry": {
+        "name": "Guest access until"
+      }
+    },
+    "device_tracker": {
+      "location": {
+        "name": "Location"
+      }
+    },
+    "number": {
+      "panel_brightness": {
+        "name": "Panel brightness"
+      }
+    },
+    "select": {
+      "panel_brightness_mode": {
+        "name": "Panel brightness mode",
+        "state": {
+          "auto": "Automatic",
+          "manual": "Manual"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "The Halumar integration is not set up or not loaded."
+    },
+    "no_data": {
+      "message": "No data from the Halumar Hub yet. Try again in a moment."
+    },
+    "rate_limited": {
+      "message": "Action {service} was called too often. Wait {wait} seconds and try again."
+    },
+    "in_progress": {
+      "message": "Action {service} is already running. Wait until it has finished."
+    },
+    "navigate_needs_area": {
+      "message": "Select an area, or turn on Home."
+    },
+    "notification_needs_text": {
+      "message": "A notification needs a title or a message."
+    },
+    "guest_tags_and_all_areas": {
+      "message": "Use either tags or All areas, not both."
+    },
+    "guest_reserved_tag": {
+      "message": "The tag \"*\" is reserved. Turn on All areas to share every area."
+    },
+    "extend_guest_needs_time": {
+      "message": "Enter hours or an expiry date and time."
+    },
+    "unknown_client": {
+      "message": "The Halumar Hub does not know the device {client_id}."
+    },
+    "watch_without_phone": {
+      "message": "The watch {client_id} shows the notifications of the phone that set it up, and that phone is no longer paired."
+    },
+    "pairing_disabled": {
+      "message": "Pairing through Home Assistant is turned off in the Halumar Hub."
+    },
+    "not_reachable": {
+      "message": "The Halumar Hub is not reachable: {error}"
+    },
+    "auth_failed": {
+      "message": "The Halumar Hub rejected the integration token."
+    },
+    "token_switching": {
+      "message": "The Halumar Hub is switching to a new integration token; retrying."
+    },
+    "update_http_error": {
+      "message": "The Halumar Hub answered with HTTP {status}."
+    },
+    "update_malformed": {
+      "message": "The Halumar Hub sent an invalid answer: {error}"
+    },
+    "cannot_connect": {
+      "message": "Cannot connect to the Halumar Hub at {url}: {error}"
+    },
+    "navigate_to_area_failed": {
+      "message": "Could not open area {area_id} on device {client_id}: {detail}"
+    },
+    "show_entity_failed": {
+      "message": "Could not show {entity_id} on device {client_id}: {detail}"
+    },
+    "display_notification_failed": {
+      "message": "Could not send the notification to {client_id}: {detail}"
+    },
+    "clear_notifications_failed": {
+      "message": "Could not clear the notifications on device {client_id}: {detail}"
+    },
+    "ack_notifications_failed": {
+      "message": "Could not confirm the notifications of device {client_id}: {detail}"
+    },
+    "refresh_client_failed": {
+      "message": "Could not refresh device {client_id}: {detail}"
+    },
+    "kick_client_failed": {
+      "message": "Could not disconnect device {client_id}: {detail}"
+    },
+    "start_pairing_failed": {
+      "message": "Could not start pairing: {detail}"
+    },
+    "start_guest_pairing_failed": {
+      "message": "Could not start guest pairing: {detail}"
+    },
+    "cancel_pairing_failed": {
+      "message": "Could not cancel pairing: {detail}"
+    },
+    "manage_client_tags_failed": {
+      "message": "Could not change the tags of device {client_id}: {detail}"
+    },
+    "extend_guest_failed": {
+      "message": "Could not extend the guest access of {client_id}: {detail}"
+    },
+    "update_guest_expiry_failed": {
+      "message": "Could not change the guest access of {client_id}: {detail}"
+    },
+    "activate_area_failed": {
+      "message": "Could not turn on area {area_id}: {detail}"
+    },
+    "deactivate_area_failed": {
+      "message": "Could not turn off area {area_id}: {detail}"
+    },
+    "blocked_remote": {
+      "message": "{entity_id} cannot be operated from away on this device."
+    },
+    "blocked_area": {
+      "message": "{entity_id} is not allowed for this device."
+    },
+    "blocked_view_only": {
+      "message": "This device may only view {entity_id} (locking and arming stay possible)."
+    },
+    "blocked_quick_access": {
+      "message": "{entity_id} cannot be switched from widgets, voice assistants or a watch on this device."
+    },
+    "blocked_group_member": {
+      "message": "{entity_id} switches devices that this device may not switch (outside its areas or not allowed)."
+    },
+    "blocked_kids": {
+      "message": "{entity_id} is blocked by parental controls."
+    },
+    "blocked_kids_bedtime": {
+      "message": "Bedtime: {entity_id} can be switched again from {until}."
+    },
+    "blocked_kids_cooldown": {
+      "message": "Short break: {entity_id} can be switched again from {until}."
+    },
+    "blocked_kids_paused_all": {
+      "message": "Break: everything can be switched again from {until}."
+    },
+    "blocked_kids_color": {
+      "message": "The colors of {entity_id} are locked by parental controls."
+    },
+    "blocked_kids_volume": {
+      "message": "The volume of {entity_id} is at the allowed maximum."
+    },
+    "kids_hub_unreachable": {
+      "message": "The Halumar Hub does not answer, so parental controls cannot check {entity_id} right now."
+    },
+    "not_allowed_action": {
+      "message": "This action is not allowed for {entity_id}."
+    },
+    "not_allowed_field": {
+      "message": "The action contains a field that is not allowed."
+    },
+    "not_allowed_value": {
+      "message": "A value of the action is not allowed."
+    },
+    "scene_not_released": {
+      "message": "{entity_id} is not allowed for this device."
+    },
+    "unknown_entity": {
+      "message": "{entity_id} does not exist."
+    },
+    "not_a_device": {
+      "message": "Only Halumar devices and administrators can use this action."
+    },
+    "rules_missing": {
+      "message": "The rules of this device have not arrived from the Halumar Hub yet."
+    },
+    "action_failed": {
+      "message": "Home Assistant could not run the action for {entity_id}."
+    },
+    "control_partly_denied": {
+      "message": "{denied} of {total} devices were not switched because the device may not operate them."
+    },
+    "rules_rejected": {
+      "message": "{rejected} rule snapshot(s) were rejected: invalid, wrong hash, or not for a device user of this integration."
+    },
+    "own_entity": {
+      "message": "{entity_id} belongs to Halumar itself (wall panel or hub) – only Home Assistant administrators and automations operate it."
+    },
+    "panel_not_found": {
+      "message": "The Halumar Hub does not know the device {device}."
+    },
+    "panel_deactivated": {
+      "message": "{device} is deactivated."
+    },
+    "panel_guest": {
+      "message": "Guests have no wall panel control."
+    },
+    "panel_not_a_panel": {
+      "message": "{device} is not a wall panel right now."
+    },
+    "panel_remote_off": {
+      "message": "Control from Home Assistant is off for {device} (profile rule)."
+    },
+    "panel_unsupported": {
+      "message": "{device} does not support this command."
+    },
+    "panel_not_connected": {
+      "message": "{device} is not connected to the Halumar Hub."
+    },
+    "panel_timeout": {
+      "message": "{device} did not answer within 5 seconds."
+    },
+    "panel_invalid": {
+      "message": "The value is not allowed."
+    },
+    "panel_not_in_panel_mode": {
+      "message": "The wall panel is not shown on {device} right now."
+    },
+    "panel_not_pro": {
+      "message": "The wall panel needs Halumar Pro on {device}."
+    },
+    "panel_failed": {
+      "message": "{device} could not carry out the command."
+    },
+    "blocked_access_closed": {
+      "message": "This device has no access right now."
+    },
+    "access_switch_failed": {
+      "message": "Could not change the access of {device}: {detail}"
+    },
+    "access_switch_none": {
+      "message": "{device} has no access switch."
+    },
+    "location_stale": {
+      "message": "The position is too old or in the future."
+    },
+    "location_not_allowed": {
+      "message": "This device may not share its location."
+    },
+    "location_background_not_allowed": {
+      "message": "This device may share its location only while the app is in use."
+    },
+    "panel_announce_off": {
+      "message": "Announcements are off for {device} (profile rule)."
+    },
+    "panel_not_visible": {
+      "message": "{device} cannot see this camera."
+    },
+    "other_hub": {
+      "message": "{url} is a different Halumar Hub than the one this entry belongs to. Nothing was changed; confirm it under Reconfigure."
+    },
+    "other_hub_held": {
+      "message": "Not sent: {url} is a different Halumar Hub than the one this entry belongs to. Nothing goes to it until you confirm it – see the repair “This is a different Halumar Hub”."
+    },
+    "queued_token_rejected": {
+      "message": "The Halumar Hub rejected the token of the integration (HTTP {status}). The change is kept and handed over once the integration is signed in again – see Settings > Devices & services."
+    }
+  },
+  "issues": {
+    "addon_version_incompatible": {
+      "title": "Update the Halumar Hub app",
+      "description": "The Halumar Hub app has version {current_version}. This integration needs version {min_version} or newer. Update the Halumar Hub app under Settings > Apps in Home Assistant; this message disappears by itself after the update."
+    },
+    "device_user_restored": {
+      "title": "Device user set back to read-only",
+      "description": "The Home Assistant user of the Halumar device {device} had other rights than its profile allows, for example because it was saved under Settings > People > Users or changed while the integration was not running. Halumar set it back. To give the device full rights, set its Home Assistant access to “Direct” in the Halumar Hub."
+    },
+    "enforcement_outage": {
+      "title": "The Halumar integration was not running",
+      "description": "Between {since} and about {until} the Halumar integration was not running while Home Assistant was. Devices on “Hub only” and “Checked” could not switch anything; devices on “Checked” could still see everything. Check the Home Assistant log for why the integration did not start."
+    },
+    "rules_unreadable": {
+      "title": "Device rules could not be read",
+      "description": "Halumar got no rules it can read from the Halumar Hub for: {devices}. These devices keep their earlier rules; a device without earlier rules can only view, not switch. Usually the Halumar integration is older than the Halumar Hub: update the integration and restart Home Assistant. Otherwise the log of the Halumar Hub app says why. This notice disappears once the rules are read."
+    },
+    "device_user_foreign_tokens": {
+      "title": "Foreign access tokens removed",
+      "description": "The Home Assistant user of the Halumar device {device} carried access tokens that Halumar did not create. Halumar removed them. If nobody in your household did this on purpose, check who uses this device."
+    },
+    "other_hub": {
+      "title": "This is a different Halumar Hub",
+      "description": "The Halumar Hub at {host} is not the hub this integration was set up with. To protect your devices nothing is removed or changed and nothing is sent to that hub while this message is shown; events wait for the right hub. If the new hub is right (for example the app was reinstalled), open the Halumar integration and choose Reconfigure (or enter the new token when Home Assistant asks for it) and confirm the new hub. Otherwise point the integration back at the previous hub."
+    },
+    "device_service_called": {
+      "title": "Device called an action Halumar cannot block",
+      "description": "The Home Assistant user of the Halumar device {device} called the action {service}. Home Assistant runs actions without an entity for every user and does not let Halumar refuse them, so this was only detected, not blocked. If the device should not do this, check who uses its access and remove the device in the Halumar Hub if needed."
+    }
+  },
+  "selector": {
+    "control_mode": {
+      "options": {
+        "basic": "Basic (on/off only)",
+        "advanced": "Advanced (common controls)",
+        "full": "Full (all controls)"
+      }
+    },
+    "notification_type": {
+      "options": {
+        "default": "Default (disappears by itself)",
+        "sticky": "Sticky (stays until dismissed)"
+      }
+    },
+    "popup_mode": {
+      "options": {
+        "none": "Banner",
+        "popup": "Popup",
+        "both": "Banner and popup",
+        "direct": "Open the action directly"
+      }
+    },
+    "color": {
+      "options": {
+        "none": "None",
+        "red": "Red",
+        "blue": "Blue",
+        "green": "Green",
+        "yellow": "Yellow",
+        "orange": "Orange"
+      }
+    },
+    "action_type": {
+      "options": {
+        "none": "None",
+        "area": "Area",
+        "entity": "Entity",
+        "url": "URL"
+      }
+    },
+    "action": {
+      "options": {
+        "add": "Add tags",
+        "remove": "Remove tags",
+        "set": "Replace all tags"
+      }
+    }
+  },
+  "services": {
+    "navigate_to_area": {
+      "name": "Navigate to area",
+      "description": "Opens an area, or the start screen, on a paired device.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        },
+        "area_id": {
+          "name": "Area ID",
+          "description": "ID of the Halumar area to open. Required unless Home is on."
+        },
+        "home": {
+          "name": "Home",
+          "description": "Open the start screen instead of an area. The area ID is then ignored."
+        }
+      }
+    },
+    "show_entity": {
+      "name": "Show entity",
+      "description": "Shows the controls of an entity on a paired device, also when the entity is in no area.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        },
+        "entity_id": {
+          "name": "Entity",
+          "description": "The entity to show."
+        },
+        "control_mode": {
+          "name": "Controls",
+          "description": "Which controls the device shows. Without a value, the device uses its default."
+        }
+      }
+    },
+    "display_notification": {
+      "name": "Display notification",
+      "description": "Sends a notification to a paired device, or with device ID \"all\" to every active device. A title or a message is required. If the hub is not reachable, the notification goes straight to the device and the hub takes it over once it is back.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device, or \"all\" for every active device."
+        },
+        "title": {
+          "name": "Title",
+          "description": "Title of the notification (bold)."
+        },
+        "message": {
+          "name": "Message",
+          "description": "Text of the notification."
+        },
+        "notification_type": {
+          "name": "Type",
+          "description": "Whether the notification disappears by itself or stays until dismissed."
+        },
+        "icon": {
+          "name": "Icon",
+          "description": "mdi:icon-name (Material Design Icons) or sf:symbol-name (SF Symbols). Without a value: bell."
+        },
+        "icon_svg": {
+          "name": "Icon SVG path",
+          "description": "SVG path data of a custom icon. Usually not needed."
+        },
+        "popup_mode": {
+          "name": "Display",
+          "description": "How the device presents the notification. Open the action directly needs an action."
+        },
+        "scheduled_at": {
+          "name": "Scheduled for",
+          "description": "Deliver at this time instead of now (ISO 8601 date and time)."
+        },
+        "priority": {
+          "name": "Priority",
+          "description": "Sort order from 0 (lowest) to 100 (highest). Default: 50."
+        },
+        "color": {
+          "name": "Color",
+          "description": "Accent color of the notification."
+        },
+        "action_type": {
+          "name": "Tap action",
+          "description": "What tapping the notification opens."
+        },
+        "action_target": {
+          "name": "Tap target",
+          "description": "Area ID, entity ID or URL, matching the tap action."
+        },
+        "show_time": {
+          "name": "Show time",
+          "description": "Whether the device shows when the notification was sent. Default: on."
+        }
+      }
+    },
+    "clear_notifications": {
+      "name": "Clear notifications",
+      "description": "Removes all notifications from a paired device. If the hub is not reachable, the device is cleared right away and the hub follows once it is back.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        }
+      }
+    },
+    "ack_notifications": {
+      "name": "Confirm notifications",
+      "description": "Confirms the delivery of notifications for a paired device. The Halumar apps use this when they cannot reach the hub directly (away from home).",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the device whose notifications are confirmed."
+        },
+        "notification_ids": {
+          "name": "Notification IDs",
+          "description": "1 to 50 notification IDs. Unknown IDs, or IDs of another device, are skipped."
+        }
+      }
+    },
+    "refresh_client": {
+      "name": "Refresh device",
+      "description": "Makes a paired device load all areas and entities again.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        }
+      }
+    },
+    "kick_client": {
+      "name": "Disconnect device",
+      "description": "Ends the connection of a paired device. The device stays paired and connects again; remove a device for good in the Halumar Hub.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        }
+      }
+    },
+    "force_refresh": {
+      "name": "Refresh Halumar data",
+      "description": "Reads all data from the Halumar Hub again now (not on the devices)."
+    },
+    "start_pairing": {
+      "name": "Start pairing",
+      "description": "Opens a pairing window with a pairing code for a new device. The code is shown in the Halumar Hub; Home Assistant shows it only when the hub's option pairing_qr_camera is set to “all”.",
+      "fields": {
+        "profile": {
+          "name": "Profile",
+          "description": "Name of a profile in the Halumar Hub that the new device gets. Without it the device gets the default profile of its type."
+        }
+      }
+    },
+    "start_guest_pairing": {
+      "name": "Start guest pairing",
+      "description": "Opens a pairing window with a pairing code for a guest device with time-limited access. The code is shown in the Halumar Hub; Home Assistant shows it only when the hub's option pairing_qr_camera is set to “guests” or “all”.",
+      "fields": {
+        "expires_hours": {
+          "name": "Access for (hours)",
+          "description": "How long the guest access lasts, from 1 hour to 90 days. Without it the guest default duration of the hub applies."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "The guest sees only active areas with one of these tags. Without tags and without All areas the guest's profile decides."
+        },
+        "all_areas": {
+          "name": "All areas",
+          "description": "Share every active area with the guest, also areas added later. Cannot be combined with tags."
+        },
+        "profile": {
+          "name": "Profile",
+          "description": "Name of a profile in the Halumar Hub that the guest gets (never one with parental controls). Without it the guest gets the guest default profile."
+        }
+      }
+    },
+    "cancel_pairing": {
+      "name": "Cancel pairing",
+      "description": "Closes an open pairing window. Does nothing when no window is open."
+    },
+    "manage_client_tags": {
+      "name": "Manage device tags",
+      "description": "Adds, removes or replaces the tags of a device. Tags decide which areas the device sees.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        },
+        "action": {
+          "name": "Action",
+          "description": "What to do with the tags."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "The tags. \"*\" means all areas (guests see nothing without tags)."
+        }
+      }
+    },
+    "extend_guest": {
+      "name": "Extend guest access",
+      "description": "Extends the access of a guest device, by a number of hours from now or to a date and time.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the guest device."
+        },
+        "hours": {
+          "name": "Hours",
+          "description": "Access for this many hours from now. Use either hours or until."
+        },
+        "expires_at": {
+          "name": "Until",
+          "description": "Access until this date and time (ISO 8601). Use either hours or until."
+        }
+      }
+    },
+    "control": {
+      "name": "Switch for a device",
+      "description": "Switches entities on behalf of a Halumar device after checking its rules (areas, when away, parental controls). The Halumar apps and the Halumar Hub use it; devices on “Checked” and “Hub only” switch only through it.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity",
+          "description": "One entity."
+        },
+        "entity_ids": {
+          "name": "Entities",
+          "description": "Several entities for one action (for example all off); not together with Entity."
+        },
+        "action": {
+          "name": "Action",
+          "description": "Action of the entity's own domain, for example turn_on."
+        },
+        "data": {
+          "name": "Data",
+          "description": "Action data without targets; only allowed fields."
+        },
+        "origin": {
+          "name": "Origin",
+          "description": "app or quick_access (widgets, voice assistants, watch)."
+        },
+        "check_only": {
+          "name": "Check only",
+          "description": "Only check, do not switch."
+        },
+        "grant": {
+          "name": "Grant",
+          "description": "Only for the Halumar Hub (devices that switch through the hub)."
+        }
+      }
+    },
+    "apply_rules": {
+      "name": "Apply rule snapshots",
+      "description": "Applies rule snapshots of devices by hand. The Halumar Hub sends them itself; only for checks.",
+      "fields": {
+        "snapshots": {
+          "name": "Snapshots",
+          "description": "Rule snapshots as the hub sends them."
+        },
+        "removed": {
+          "name": "Removed",
+          "description": "Device IDs whose snapshot is removed."
+        },
+        "complete": {
+          "name": "Complete",
+          "description": "The list contains every device; others are removed."
+        },
+        "control_paths": {
+          "name": "Control paths",
+          "description": "Device ID to control path (checked or direct), as the hub sends it next to the snapshots."
+        }
+      }
+    },
+    "report_location": {
+      "name": "Report a device location",
+      "description": "Updates the device tracker of a Halumar device after checking its rule “Share location with the hub”. The Halumar apps use it at home and away; devices never call device_tracker.see.",
+      "fields": {
+        "latitude": {
+          "name": "Latitude",
+          "description": "WGS 84 degrees."
+        },
+        "longitude": {
+          "name": "Longitude",
+          "description": "WGS 84 degrees."
+        },
+        "accuracy": {
+          "name": "Accuracy",
+          "description": "Horizontal accuracy in meters."
+        },
+        "altitude": {
+          "name": "Altitude",
+          "description": "Meters above sea level."
+        },
+        "vertical_accuracy": {
+          "name": "Vertical accuracy",
+          "description": "Meters."
+        },
+        "speed": {
+          "name": "Speed",
+          "description": "Meters per second."
+        },
+        "course": {
+          "name": "Course",
+          "description": "Degrees, 0 = north."
+        },
+        "battery_level": {
+          "name": "Battery level",
+          "description": "Percent."
+        },
+        "background": {
+          "name": "In the background",
+          "description": "The app was not in the foreground."
+        },
+        "ts": {
+          "name": "Time",
+          "description": "Time of the position (ISO 8601 with offset)."
+        },
+        "location_shared": {
+          "name": "Shared",
+          "description": "What the app shares now: none, foreground or background."
+        }
+      }
+    },
+    "panel_announce": {
+      "name": "Announce on a wall panel",
+      "description": "Speaks and shows a text on a wall panel, with a chime. The profile rule “Announcements and chime” must be on; it caps the volume.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        },
+        "text": {
+          "name": "Text",
+          "description": "What the panel announces (up to 300 characters, never logged)."
+        },
+        "volume": {
+          "name": "Volume",
+          "description": "Volume in percent. Without a value the profile's maximum applies."
+        },
+        "chime": {
+          "name": "Chime",
+          "description": "Play a chime before the text."
+        }
+      }
+    },
+    "panel_show_camera": {
+      "name": "Open a camera on a panel or TV",
+      "description": "Opens the view of a camera on a wall panel or TV, e.g. when the doorbell rings. Only cameras the device may see; picture-in-picture starts only on the device.",
+      "fields": {
+        "client_id": {
+          "name": "Device ID",
+          "description": "ID of the paired device (attribute client_id of its entities)."
+        },
+        "entity_id": {
+          "name": "Camera",
+          "description": "The camera to open."
+        }
+      }
+    }
+  }
+}

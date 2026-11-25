@@ -1,0 +1,266 @@
+name: Validate
+
+# PR and branch gate of the integration; release.yml calls it before every release.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Commit of home-assistant/core whose pylint plugin the pylint-ha job uses.
+  HA_CORE_PYLINT_REF: a779eda404f168cc3d979ea3805becb092113a38 # dev 2026-11-18
+
+concurrency:
+  # Literal prefix plus github.workflow (= the caller when called from release.yml):
+  # a direct run and a called run never share a group, and none matches the caller.
+  group: integration-validate-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hassfest:
+    name: Hassfest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Docker available
+        run: |
+          docker info --format 'Docker {{.ServerVersion}} {{.OSType}}/{{.Architecture}}' \
+            || { echo "::error::hassfest needs Docker on the runner (Docker not running?)"; exit 1; }
+      # The action pins the problem matcher; the hassfest image itself is always the
+      # latest HA rule set on purpose (a new HA rule must turn this job red).
+      - uses: home-assistant/actions/hassfest@86d4564712fa02543c808e3a693dd04f9d3f8361 # master 2026-10-26
+
+  contracts:
+    name: Contract and brand
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/contracts
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Contract test
+        run: scripts/ci/contracts-check.sh
+      # Generated brand files match contracts/brand.json; no brand or namespace
+      # literal outside the allowed files (scripts/brand-check.sh, .brandlint.toml).
+      - name: Brand lint
+        run: scripts/brand-check.sh
+      # No ticket references, planning documents, local paths or test-network addresses
+      # (rules and exceptions: tools/publiclint/README.md in the contract).
+      - name: Public text lint
+        run: python "$CONTRACTS_DIR/tools/publiclint/publiclint.py" .
+
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+      - run: pip install -r .github/requirements-ci.txt
+      # Only this repo's sources (a contract checkout or submodule is linted upstream).
+      - name: ruff check (blocking)
+        run: ruff check --output-format=github custom_components tests
+      - name: ruff format --check (blocking)
+        run: ruff format --check custom_components tests
+      # Apache-2.0 text unchanged (catalog license check), NOTICE lists the manifest requirements.
+      - name: Licenses
+        run: python scripts/ci/check-licenses.py
+
+  # Runs the integration test suite against the current HA release
+  # (requirements_test.txt, pytest-homeassistant), the minimum supported HA
+  # release declared in hacs.json (requirements_test_min.txt) and the newest HA
+  # pre-release (early warning, never blocking). Tests import the harness
+  # through tests/_ha.py. The pinned contract provides CONTRACTS_DIR for the
+  # shared test vectors (tests/test_enforce.py).
+  pytest:
+    name: Pytest (${{ matrix.name }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Stable names: they are required status checks (branch protection);
+          # the HA version lives in the requirements files.
+          - name: current
+            python-version: "3.14"
+            requirements: requirements_test.txt
+            experimental: false
+            coverage: true
+            # Load the HA harness before other pytest11 entry points: HA 2026.11
+            # aliases httpx to httpx2 on import and fails if a plugin (respx)
+            # imported httpx first. Entry-point order differs between Linux and macOS.
+            pytest-args: "-p pytest_homeassistant"
+          - name: min
+            python-version: "3.13"
+            requirements: requirements_test_min.txt
+            experimental: false
+            pytest-args: ""
+          - name: beta
+            python-version: "3.14"
+            requirements: requirements_test.txt
+            experimental: true
+            beta: true
+            pytest-args: "-p pytest_homeassistant"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/contracts
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: ${{ matrix.requirements }}
+      - name: Install test requirements
+        env:
+          REQUIREMENTS: ${{ matrix.requirements }}
+        run: pip install -r "$REQUIREMENTS"
+      # Newest pytest-homeassistant including pre-releases (2026.12.0bN …). When no
+      # beta is newer than the stable pin this re-tests the stable release.
+      - name: Upgrade to the newest Home Assistant pre-release
+        if: matrix.beta
+        run: |
+          pip install --upgrade --pre pytest-homeassistant
+          python -c 'import importlib.metadata as m; print("homeassistant", m.version("homeassistant"))' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Show Home Assistant version
+        run: python -c 'import importlib.metadata as m; print("homeassistant", m.version("homeassistant"))'
+      - name: pytest
+        if: ${{ !matrix.coverage }}
+        env:
+          PYTEST_ARGS: ${{ matrix.pytest-args }}
+        run: |
+          # PYTEST_ARGS is intentionally word-split (several -p flags).
+          # shellcheck disable=SC2086
+          python -m pytest tests -p no:sugar -p no:cacheprovider $PYTEST_ARGS
+      # Quality scale test-coverage (Silver): more than 95% of every module,
+      # config-flow-test-coverage (Bronze): 100% of config_flow.py.
+      - name: pytest with coverage gate
+        if: ${{ matrix.coverage }}
+        env:
+          PYTEST_ARGS: ${{ matrix.pytest-args }}
+        run: |
+          pip install -r .github/requirements-ci.txt
+          # shellcheck disable=SC2086
+          python -m pytest tests -p no:sugar -p no:cacheprovider $PYTEST_ARGS \
+            -p pytest_cov --cov=custom_components --cov-report=json:coverage.json
+          python scripts/ci/check-coverage.py coverage.json | tee -a "$GITHUB_STEP_SUMMARY"
+
+  # Deprecation report against current HA: HA logs "Detected that custom
+  # integration ..." for deprecated API use, with the HA version that removes it.
+  # Never blocking; the results go to the job summary.
+  deprecations:
+    name: Deprecation report (current Home Assistant)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - run: pip install -r requirements_test.txt
+      - name: pytest with warnings logged
+        run: |
+          set +e
+          python -m pytest tests -q -p pytest_homeassistant -p no:sugar -p no:cacheprovider \
+            -W default -o log_cli=true --log-cli-level=WARNING > "$RUNNER_TEMP/deprecations.log" 2>&1
+          {
+            echo "### Deprecations (HA $(python -c 'import importlib.metadata as m; print(m.version("homeassistant"))'))"
+            echo '```'
+            grep -E "Detected that custom integration 'halumar'|custom_components/halumar.*[Dd]eprecat" \
+              "$RUNNER_TEMP/deprecations.log" | sed -E 's/^.*(Detected|custom_components)/\1/' | sort | uniq -c | sort -rn | head -50
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+
+  mypy:
+    name: mypy (strict)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - run: pip install -r requirements_test.txt -r .github/requirements-ci.txt
+      # Quality scale strict-typing: strict settings in pyproject.toml.
+      - run: mypy custom_components
+
+  # Checks of HA core's pylint plugin (quality-scale claims, action setup,
+  # exception translations, MDI icons, test conventions). The plugin targets
+  # core's layout, so the script mirrors the integration into an overlay of
+  # the installed homeassistant package. Informational: the plugin is not
+  # published, it is checked out from core at a pinned commit.
+  pylint-ha:
+    name: pylint-home-assistant (informational)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: home-assistant/core
+          ref: ${{ env.HA_CORE_PYLINT_REF }}
+          path: .ha-core
+          sparse-checkout: packages/pylint-home-assistant
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - run: pip install -r requirements_test.txt -r .github/requirements-ci.txt ./.ha-core/packages/pylint-home-assistant
+      - run: scripts/ci/pylint-ha.sh
+
+  # HACS-store validation only works on PUBLIC repos: it loads hacs.json and the
+  # integration manifest.json through the HACS backend, which cannot read a
+  # private repo. The job runs automatically once the repo is public
+  # and is then blocking, without ignored checks (catalog requirement). Add it
+  # to the required checks of the ruleset together with Hassfest.
+  hacs:
+    name: HACS
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    if: ${{ github.event.repository.private == false }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The action runs the image ghcr.io/hacs/action:main (not pinnable via the SHA).
+      - uses: hacs/action@1ebf01c408f29afcb6406bd431bc98fd8cbb15aa # main 2026
+        with:
+          category: integration
+          comment: "false"

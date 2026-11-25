@@ -1,0 +1,143 @@
+name: Release
+
+# A release is triggered by "version" in custom_components/halumar/manifest.json
+# holding a value on main that has no GitHub release yet (same model as the hub's
+# build.yaml):
+#
+#   1. gate:   main only; version from manifest.json; pre-releases (…-dev) never
+#              publish; CHANGELOG.md needs a "## <version>" section; no published
+#              release of that version may exist.
+#   2. tests:  the full Validate workflow (hassfest, contract/brand, ruff, pytest
+#              current + minimum HA). Nothing is released on red.
+#   3. release: lightweight tag <version> (no "v", CalVer like the hub) and a
+#              GitHub release with the CHANGELOG section as its body plus a zip of
+#              the integration folder for manual installs. The Marketplace and
+#              HACS install the tagged files and show the body as release notes.
+#              An existing tag (lightweight or annotated) is reused when it points
+#              at the same commit; a leftover draft of the version is published.
+#
+# Release order with the hub: integration first (docs/releasing.md).
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: integration-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: Release needed?
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      publish: ${{ steps.check.outputs.publish }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            echo "::error::Releases are made from main only, not from ${GITHUB_REF}."
+            exit 1
+          fi
+          manifest="$(ls custom_components/*/manifest.json)"
+          version="$(jq -r .version "$manifest")"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          case "${version}" in
+            *-*)
+              echo "Version ${version} is a pre-release, nothing to publish."
+              echo "publish=false" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+          esac
+          version_pattern="${version//./\\.}"
+          if ! grep -qE "^##[[:space:]]+\[?v?${version_pattern}\]?[[:space:]]*$" CHANGELOG.md; then
+            echo "::error file=CHANGELOG.md::CHANGELOG.md has no '## ${version}' section."
+            exit 1
+          fi
+          # A draft does not count: only a published release reaches users.
+          draft="$(gh release view "${version}" --repo "${GITHUB_REPOSITORY}" --json isDraft --jq .isDraft 2>/dev/null || true)"
+          if [ "${draft}" = "false" ]; then
+            echo "Version ${version} is already released."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version ${version} is not released yet, this run releases it."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  tests:
+    name: Validate
+    needs: gate
+    if: needs.gate.outputs.publish == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/validate.yml
+
+  release:
+    name: Tag and GitHub release
+    needs: [gate, tests]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Create and push tag
+        env:
+          VERSION: ${{ needs.gate.outputs.version }}
+        run: |
+          set -euo pipefail
+          # An annotated tag lists the tag object and, as <tag>^{}, the commit it points at.
+          refs="$(git ls-remote --tags origin "refs/tags/${VERSION}" "refs/tags/${VERSION}^{}")"
+          remote="$(printf '%s\n' "${refs}" | awk '$2 ~ /\^\{\}$/ {print $1}')"
+          [ -n "${remote}" ] || remote="$(printf '%s\n' "${refs}" | awk 'NF {print $1; exit}')"
+          if [ -z "${remote}" ]; then
+            git tag "${VERSION}"
+            git push origin "${VERSION}"
+          elif [ "${remote}" = "$(git rev-parse HEAD)" ]; then
+            echo "Tag ${VERSION} already points at this commit; creating the missing release."
+          else
+            echo "::error::Tag ${VERSION} exists on another commit (${remote})."
+            exit 1
+          fi
+      - name: GitHub release
+        env:
+          VERSION: ${{ needs.gate.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          awk -v v="${VERSION}" '
+            /^##[[:space:]]/ {
+              if (on) exit
+              h = $0
+              sub(/^##[[:space:]]+\[?v?/, "", h)
+              sub(/\]?[[:space:]]*$/, "", h)
+              if (h == v) { on = 1; next }
+            }
+            on { print }
+          ' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          domain="$(basename "$(dirname "$(ls custom_components/*/manifest.json)")")"
+          (cd "custom_components/${domain}" && zip -qr "$RUNNER_TEMP/${domain}.zip" . -x '__pycache__/*' '*.pyc')
+          draft="$(gh release view "${VERSION}" --json isDraft --jq .isDraft 2>/dev/null || true)"
+          if [ "${draft}" = "true" ]; then
+            # A draft of this version is left over: fill and publish it.
+            gh release upload "${VERSION}" "$RUNNER_TEMP/${domain}.zip" --clobber
+            gh release edit "${VERSION}" --draft=false --title "${VERSION}" \
+              --notes-file "$RUNNER_TEMP/notes.md"
+          else
+            gh release create "${VERSION}" --verify-tag --title "${VERSION}" \
+              --notes-file "$RUNNER_TEMP/notes.md" "$RUNNER_TEMP/${domain}.zip"
+          fi

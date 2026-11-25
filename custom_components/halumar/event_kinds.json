@@ -1,0 +1,338 @@
+{
+  "version": 4,
+  "kinds": [
+    {
+      "kind": "device_paired",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Gerät gekoppelt",
+        "en": "Device paired"
+      }
+    },
+    {
+      "kind": "device_set_up",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Gerät eingerichtet",
+        "en": "Device set up"
+      }
+    },
+    {
+      "kind": "device_removed",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Gerät entfernt",
+        "en": "Device removed"
+      }
+    },
+    {
+      "kind": "access_opened",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Zugang geöffnet",
+        "en": "Access opened"
+      }
+    },
+    {
+      "kind": "access_closed",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Zugang geschlossen",
+        "en": "Access closed"
+      }
+    },
+    {
+      "kind": "access_requested",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Früher Zugang angefragt",
+        "en": "Early access requested"
+      }
+    },
+    {
+      "kind": "access_request_answered",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Anfrage nach frühem Zugang beantwortet",
+        "en": "Early access request answered"
+      }
+    },
+    {
+      "kind": "access_request_expired",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Anfrage nach frühem Zugang unbeantwortet",
+        "en": "Early access request unanswered"
+      }
+    },
+    {
+      "kind": "profile_changed",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Profil eines Geräts geändert",
+        "en": "Profile of a device changed"
+      }
+    },
+    {
+      "kind": "adjustment_expiring",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Befristete Anpassung läuft bald ab",
+        "en": "Temporary adjustment ends soon"
+      }
+    },
+    {
+      "kind": "adjustment_expired",
+      "category": "devices",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Befristete Anpassung abgelaufen",
+        "en": "Temporary adjustment ended"
+      }
+    },
+    {
+      "kind": "guest_invited",
+      "category": "guests",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Gast eingeladen",
+        "en": "Guest invited"
+      }
+    },
+    {
+      "kind": "guest_paired",
+      "category": "guests",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Gast gekoppelt",
+        "en": "Guest paired"
+      }
+    },
+    {
+      "kind": "guest_expiring",
+      "category": "guests",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Gastzugang läuft bald ab",
+        "en": "Guest access ends soon"
+      }
+    },
+    {
+      "kind": "guest_expired",
+      "category": "guests",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Gastzugang abgelaufen",
+        "en": "Guest access ended"
+      }
+    },
+    {
+      "kind": "kids_control",
+      "category": "kids",
+      "source": "integration",
+      "alarm": false,
+      "label": {
+        "de": "Kind schaltet etwas",
+        "en": "Child switches something"
+      }
+    },
+    {
+      "kind": "kids_bedtime_attempt",
+      "category": "kids",
+      "source": "integration",
+      "alarm": false,
+      "label": {
+        "de": "Versuch während der Schlafenszeit",
+        "en": "Attempt during bedtime"
+      }
+    },
+    {
+      "kind": "kids_pause",
+      "category": "kids",
+      "source": "integration",
+      "alarm": false,
+      "label": {
+        "de": "Pause wegen zu vieler Aktionen",
+        "en": "Pause after too many actions"
+      }
+    },
+    {
+      "kind": "kids_paused_all",
+      "category": "kids",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Alles pausiert (zu viele Geräte oder Aktionen)",
+        "en": "Everything paused (too many devices or actions)"
+      },
+      "notify_min_interval_minutes": 15
+    },
+    {
+      "kind": "kids_release_requested",
+      "category": "kids",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Eltern-Freigabe angefragt",
+        "en": "Parent approval requested"
+      }
+    },
+    {
+      "kind": "kids_request_answered",
+      "category": "kids",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Anfrage eines Kindes beantwortet",
+        "en": "Child's request answered"
+      }
+    },
+    {
+      "kind": "kids_request_expired",
+      "category": "kids",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Anfrage eines Kindes unbeantwortet",
+        "en": "Child's request unanswered"
+      }
+    },
+    {
+      "kind": "family_change",
+      "category": "kids",
+      "source": "hub",
+      "alarm": false,
+      "important": true,
+      "label": {
+        "de": "Kinderregel durch Familienverwaltung geändert",
+        "en": "Kids rule changed by a family manager"
+      }
+    },
+    {
+      "kind": "control",
+      "category": "activity",
+      "source": "integration",
+      "alarm": false,
+      "label": {
+        "de": "Gerät schaltet etwas",
+        "en": "Device switches something"
+      }
+    },
+    {
+      "kind": "panel_command",
+      "category": "activity",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Wandpanel gesteuert",
+        "en": "Wall panel controlled"
+      }
+    },
+    {
+      "kind": "panel_command_rejected",
+      "category": "activity",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Wandpanel-Befehl abgelehnt",
+        "en": "Wall panel command rejected"
+      }
+    },
+    {
+      "kind": "tag_scanned",
+      "category": "activity",
+      "source": "hub",
+      "alarm": false,
+      "label": {
+        "de": "Tag gescannt",
+        "en": "Tag scanned"
+      }
+    },
+    {
+      "kind": "denied",
+      "category": "alarms",
+      "source": "integration",
+      "alarm": true,
+      "label": {
+        "de": "Schaltversuch abgelehnt",
+        "en": "Control attempt rejected"
+      }
+    },
+    {
+      "kind": "access_group_restored",
+      "category": "alarms",
+      "source": "integration",
+      "alarm": true,
+      "label": {
+        "de": "Zugriffsgruppe wiederhergestellt",
+        "en": "Access group restored"
+      }
+    },
+    {
+      "kind": "direct_access_attempt",
+      "category": "alarms",
+      "source": "integration",
+      "alarm": true,
+      "label": {
+        "de": "Direkter Zugriffsversuch",
+        "en": "Direct access attempt"
+      }
+    },
+    {
+      "kind": "integration_outage",
+      "category": "alarms",
+      "source": "integration",
+      "alarm": true,
+      "label": {
+        "de": "Integration lief nicht",
+        "en": "Integration was not running"
+      }
+    },
+    {
+      "kind": "integration_started",
+      "category": "system",
+      "source": "integration",
+      "alarm": false,
+      "label": {
+        "de": "Integration gestartet",
+        "en": "Integration started"
+      }
+    }
+  ]
+}

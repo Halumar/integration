@@ -1,0 +1,22 @@
+# Test dependencies for the "min" CI matrix entry: the minimum supported HA
+# release. The current HA release is tested with requirements_test.txt.
+#
+# pytest-homeassistant-custom-component pins the exact homeassistant version
+# it was generated from; 0.13.297 pins homeassistant==2025.11.3, the last
+# patch release of the minimum supported minor declared in hacs.json
+# ("homeassistant": "2025.11.0"). Requires Python 3.13.
+pytest-homeassistant-custom-component==0.13.297
+
+# HTTP mocking that intercepts aiohttp.ClientSession._request, covering both
+# the coordinator's own ClientSession and the shared HA client session used
+# by the config flow (aiohttp 3.13 with HA 2025.11, no fix needed).
+aioresponses==0.7.9
+
+# aiodns 3.5.0 (pinned by homeassistant 2025.11) only declares pycares>=4.9,
+# but fails on import with pycares 5 (ares_query_a_result). 4.11.0 is the
+# release contemporaneous with homeassistant 2025.11.
+pycares==4.11.0
+
+# The camera component imports turbojpeg at module level (version from
+# homeassistant/components/camera/manifest.json in 2025.11).
+PyTurboJPEG==1.8.0

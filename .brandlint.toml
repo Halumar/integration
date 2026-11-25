@@ -1,0 +1,15 @@
+# Brand lint for halumar/integration (merged onto contracts/tools/brand/default.brandlint.toml).
+# Namespace literals live in custom_components/halumar/const.py; tests pin the frozen
+# namespace as literals on purpose.
+# The issue template links name the product, its website and the repositories.
+# Blueprints are static YAML that Home Assistant reads as is (no brand.py): they name the
+# product and filter by the integration domain (battery protection).
+namespace_allowed = ["tests/**", ".gitmodules", "NOTICE", ".github/ISSUE_TEMPLATE/config.yml", "custom_components/halumar/blueprints/**"]
+# Legal text names the licensor's product; the contract checkout names the
+# organization's contract repository.
+brand_allowed = ["NOTICE", ".github/ISSUE_TEMPLATE/config.yml", ".github/**/contracts/action.yml", "custom_components/halumar/blueprints/**"]
+# HA forces the package folder custom_components/<domain>.
+# Second pattern: runner labels on runs-on lines of the workflows.
+allow_line_patterns = ['custom_components[./]halumar', '^\s*runs-on: ']
+# contracts/: the contract as git submodule, linted in the contracts repo itself.
+exclude = ["contracts/**"]

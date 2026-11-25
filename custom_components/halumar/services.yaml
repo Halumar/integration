@@ -1,0 +1,444 @@
+# Names, descriptions and option labels are in translations/*.json.
+navigate_to_area:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    area_id:
+      required: false
+      example: uuid-of-area
+      selector:
+        text:
+    home:
+      required: false
+      default: false
+      selector:
+        boolean:
+
+show_entity:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    entity_id:
+      required: true
+      example: light.living_room
+      selector:
+        entity:
+    control_mode:
+      required: false
+      example: full
+      selector:
+        select:
+          options:
+          - basic
+          - advanced
+          - full
+          translation_key: control_mode
+
+display_notification:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    title:
+      required: false
+      example: Security Alert
+      selector:
+        text:
+    message:
+      required: false
+      example: Front door opened while away mode is active.
+      selector:
+        text:
+    notification_type:
+      required: false
+      default: default
+      selector:
+        select:
+          options:
+          - default
+          - sticky
+          translation_key: notification_type
+    icon:
+      required: false
+      example: mdi:door-open
+      selector:
+        text:
+    icon_svg:
+      required: false
+      selector:
+        text:
+    popup_mode:
+      required: false
+      selector:
+        select:
+          options:
+          - none
+          - popup
+          - both
+          - direct
+          translation_key: popup_mode
+    scheduled_at:
+      required: false
+      example: '2026-07-03T18:00:00+00:00'
+      selector:
+        text:
+    priority:
+      required: false
+      example: 80
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+    color:
+      required: false
+      selector:
+        select:
+          options:
+          - none
+          - red
+          - blue
+          - green
+          - yellow
+          - orange
+          translation_key: color
+    action_type:
+      required: false
+      selector:
+        select:
+          options:
+          - none
+          - area
+          - entity
+          - url
+          translation_key: action_type
+    action_target:
+      required: false
+      example: light.living_room
+      selector:
+        text:
+    show_time:
+      required: false
+      selector:
+        boolean:
+
+clear_notifications:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+
+ack_notifications:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    notification_ids:
+      required: true
+      example:
+      - 6a7c9c1e-0b5e-4d9a-9d2f-1f2e3d4c5b6a
+      selector:
+        text:
+          multiple: true
+
+refresh_client:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+
+kick_client:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+
+force_refresh: {}
+
+start_pairing:
+  fields:
+    profile:
+      required: false
+      example: Wandpanel
+      selector:
+        text:
+
+start_guest_pairing:
+  fields:
+    expires_hours:
+      required: false
+      example: 24
+      selector:
+        number:
+          min: 1
+          max: 2160
+          step: 1
+          unit_of_measurement: hours
+    tags:
+      required: false
+      example:
+      - guest
+      - public
+      selector:
+        text:
+          multiple: true
+    all_areas:
+      required: false
+      default: false
+      selector:
+        boolean:
+    profile:
+      required: false
+      example: Gast
+      selector:
+        text:
+
+cancel_pairing: {}
+
+manage_client_tags:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    action:
+      required: true
+      selector:
+        select:
+          options:
+          - add
+          - remove
+          - set
+          translation_key: action
+    tags:
+      required: true
+      example:
+      - guest
+      - public
+      selector:
+        text:
+          multiple: true
+
+extend_guest:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    hours:
+      required: false
+      example: 24
+      selector:
+        number:
+          min: 0.5
+          max: 720
+          step: 0.5
+          unit_of_measurement: hours
+    expires_at:
+      required: false
+      example: '2026-03-01T18:00:00+00:00'
+      selector:
+        text:
+
+control:
+  fields:
+    entity_id:
+      required: false
+      example: light.living_room
+      selector:
+        entity:
+    entity_ids:
+      required: false
+      example: "[light.living_room, light.kitchen]"
+      selector:
+        entity:
+          multiple: true
+    action:
+      required: true
+      example: turn_on
+      selector:
+        text:
+    data:
+      required: false
+      example: '{"brightness_pct": 40}'
+      selector:
+        object:
+    origin:
+      required: false
+      default: app
+      selector:
+        select:
+          options:
+          - app
+          - quick_access
+    check_only:
+      required: false
+      default: false
+      selector:
+        boolean:
+    grant:
+      required: false
+      selector:
+        text:
+
+apply_rules:
+  fields:
+    snapshots:
+      required: false
+      selector:
+        object:
+    removed:
+      required: false
+      selector:
+        object:
+    complete:
+      required: false
+      default: false
+      selector:
+        boolean:
+    control_paths:
+      required: false
+      selector:
+        object:
+
+report_location:
+  fields:
+    latitude:
+      required: true
+      example: 47.3769
+      selector:
+        number:
+          min: -90
+          max: 90
+          step: any
+    longitude:
+      required: true
+      example: 8.5417
+      selector:
+        number:
+          min: -180
+          max: 180
+          step: any
+    accuracy:
+      required: true
+      example: 12
+      selector:
+        number:
+          min: 0
+          max: 100000
+          step: any
+          unit_of_measurement: m
+    altitude:
+      required: false
+      selector:
+        number:
+          min: -1000
+          max: 100000
+          step: any
+          unit_of_measurement: m
+    vertical_accuracy:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 100000
+          step: any
+          unit_of_measurement: m
+    speed:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 1000
+          step: any
+          unit_of_measurement: m/s
+    course:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 360
+          step: any
+          unit_of_measurement: "°"
+    battery_level:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    background:
+      required: true
+      default: false
+      selector:
+        boolean:
+    ts:
+      required: true
+      example: "2026-11-21T18:00:00+00:00"
+      selector:
+        text:
+    location_shared:
+      required: false
+      selector:
+        select:
+          options:
+          - none
+          - foreground
+          - background
+
+panel_announce:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    text:
+      required: true
+      example: Es hat geklingelt
+      selector:
+        text:
+    volume:
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 100
+          unit_of_measurement: "%"
+    chime:
+      required: false
+      default: true
+      selector:
+        boolean:
+
+panel_show_camera:
+  fields:
+    client_id:
+      required: true
+      example: abc123-def456
+      selector:
+        text:
+    entity_id:
+      required: true
+      example: camera.front_door
+      selector:
+        entity:
+          domain: camera

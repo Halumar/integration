@@ -1,0 +1,27 @@
+{
+  "domain": "halumar",
+  "name": "Halumar",
+  "after_dependencies": [
+    "cloud",
+    "hassio",
+    "script"
+  ],
+  "categories": [
+    "presence_location.phones_companion_apps",
+    "other_ecosystems"
+  ],
+  "codeowners": [
+    "@Halumar"
+  ],
+  "config_flow": true,
+  "dependencies": [
+    "http",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/Halumar/integration",
+  "integration_type": "hub",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Halumar/integration/issues",
+  "requirements": [],
+  "version": "2026.12.0"
+}

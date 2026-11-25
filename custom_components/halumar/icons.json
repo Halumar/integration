@@ -1,0 +1,194 @@
+{
+  "entity": {
+    "sensor": {
+      "version": {
+        "default": "mdi:tag"
+      },
+      "areas": {
+        "default": "mdi:floor-plan"
+      },
+      "connected_clients": {
+        "default": "mdi:devices"
+      },
+      "guests": {
+        "default": "mdi:account-clock"
+      },
+      "area": {
+        "default": "mdi:texture-box"
+      },
+      "current_area": {
+        "default": "mdi:eye",
+        "state": {
+          "home": "mdi:home"
+        }
+      },
+      "device_name": {
+        "default": "mdi:cellphone"
+      },
+      "app_version": {
+        "default": "mdi:tag"
+      },
+      "connection_type": {
+        "default": "mdi:wifi",
+        "state": {
+          "disconnected": "mdi:wifi-off"
+        }
+      },
+      "last_seen": {
+        "default": "mdi:clock-outline"
+      },
+      "notifications": {
+        "default": "mdi:bell",
+        "range": {
+          "0": "mdi:bell-outline",
+          "1": "mdi:bell-badge"
+        }
+      },
+      "panel_screen": {
+        "default": "mdi:tablet-dashboard",
+        "state": {
+          "off": "mdi:monitor-off",
+          "screensaver": "mdi:sleep",
+          "dimmed": "mdi:brightness-4",
+          "night": "mdi:weather-night"
+        }
+      },
+      "panel_brightness": {
+        "default": "mdi:brightness-6"
+      },
+      "battery_temperature": {
+        "default": "mdi:thermometer"
+      }
+    },
+    "binary_sensor": {
+      "pairing_active": {
+        "default": "mdi:qrcode-scan",
+        "state": {
+          "off": "mdi:qrcode"
+        }
+      },
+      "app_active": {
+        "default": "mdi:cellphone-off",
+        "state": {
+          "on": "mdi:cellphone-check"
+        }
+      }
+    },
+    "button": {
+      "start_pairing": {
+        "default": "mdi:qrcode"
+      },
+      "start_guest_pairing": {
+        "default": "mdi:account-clock"
+      },
+      "cancel_pairing": {
+        "default": "mdi:qrcode-remove"
+      },
+      "panel_wake": {
+        "default": "mdi:gesture-tap"
+      },
+      "panel_screensaver": {
+        "default": "mdi:sleep"
+      },
+      "panel_home": {
+        "default": "mdi:home"
+      },
+      "panel_reload": {
+        "default": "mdi:refresh"
+      }
+    },
+    "camera": {
+      "pairing_qr_code": {
+        "default": "mdi:qrcode"
+      }
+    },
+    "switch": {
+      "area": {
+        "default": "mdi:eye",
+        "state": {
+          "off": "mdi:eye-off"
+        }
+      },
+      "access": {
+        "default": "mdi:door-open",
+        "state": {
+          "off": "mdi:door-closed-lock"
+        }
+      }
+    },
+    "datetime": {
+      "guest_expiry": {
+        "default": "mdi:clock-end"
+      }
+    },
+    "number": {
+      "panel_brightness": {
+        "default": "mdi:brightness-6"
+      }
+    },
+    "select": {
+      "panel_brightness_mode": {
+        "default": "mdi:brightness-auto",
+        "state": {
+          "manual": "mdi:brightness-percent"
+        }
+      }
+    }
+  },
+  "services": {
+    "navigate_to_area": {
+      "service": "mdi:floor-plan"
+    },
+    "show_entity": {
+      "service": "mdi:card-search"
+    },
+    "display_notification": {
+      "service": "mdi:bell-ring"
+    },
+    "clear_notifications": {
+      "service": "mdi:bell-remove"
+    },
+    "ack_notifications": {
+      "service": "mdi:bell-check"
+    },
+    "refresh_client": {
+      "service": "mdi:refresh"
+    },
+    "kick_client": {
+      "service": "mdi:lan-disconnect"
+    },
+    "force_refresh": {
+      "service": "mdi:database-refresh"
+    },
+    "start_pairing": {
+      "service": "mdi:qrcode"
+    },
+    "start_guest_pairing": {
+      "service": "mdi:account-clock"
+    },
+    "cancel_pairing": {
+      "service": "mdi:qrcode-remove"
+    },
+    "manage_client_tags": {
+      "service": "mdi:tag-multiple"
+    },
+    "extend_guest": {
+      "service": "mdi:clock-plus"
+    },
+    "control": {
+      "service": "mdi:shield-check"
+    },
+    "apply_rules": {
+      "service": "mdi:shield-sync"
+    },
+    "report_location": {
+      "service": "mdi:map-marker-account"
+    },
+    "panel_announce": {
+      "service": "mdi:bullhorn"
+    },
+    "panel_show_camera": {
+      "service": "mdi:cctv"
+    }
+  }
+}

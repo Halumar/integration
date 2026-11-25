@@ -1,0 +1,129 @@
+blueprint:
+  name: "Doorbell: show a camera on an Apple TV"
+  description: >-
+    When the doorbell rings, opens Halumar on an Apple TV with the chosen
+    camera. Uses Home Assistant's Apple TV integration to open the link
+    /open/camera/<camera>. The link only opens the camera view and switches
+    nothing; the Apple TV's profile still decides whether the camera is
+    visible and whether it shows a live image. An Apple TV that is off stays
+    off unless "Turn the Apple TV on" is set.
+  domain: automation
+  author: Halumar
+  homeassistant:
+    min_version: "2025.11.0"
+  input:
+    doorbell:
+      name: "Doorbell"
+      description: >-
+        Doorbell event entity, or a binary sensor that turns on when the
+        doorbell rings.
+      selector:
+        entity:
+          filter:
+            - domain: event
+            - domain: binary_sensor
+    camera:
+      name: "Camera"
+      description: "Camera to show. It must be in an area the Apple TV can see."
+      selector:
+        entity:
+          filter:
+            - domain: camera
+    apple_tv:
+      name: "Apple TV"
+      description: "Media player of the Apple TV integration."
+      selector:
+        entity:
+          filter:
+            - integration: apple_tv
+              domain: media_player
+    wake_up:
+      name: "Turn the Apple TV on"
+      description: >-
+        On: wakes an Apple TV that is off (over HDMI-CEC usually the TV as
+        well). Off: shows the camera only when the Apple TV is already on.
+      default: false
+      selector:
+        boolean: {}
+    advanced:
+      name: "Advanced"
+      icon: mdi:cog
+      collapsed: true
+      input:
+        link_form:
+          name: "Link"
+          description: >-
+            "Website" (https://…/open/…) is the preferred form. "App"
+            (halumar://open/…) opens Halumar directly.
+          default: website
+          selector:
+            select:
+              options:
+                - label: "Website (https://…/open/…)"
+                  value: website
+                - label: "App (halumar://open/…)"
+                  value: app
+        website:
+          name: "Halumar website"
+          description: "Change this only if the app uses another website."
+          default: "https://halumar.com"
+          selector:
+            text: {}
+        cooldown:
+          name: "Pause after opening"
+          description: "Ringing again within this time does not open the camera again."
+          default: 30
+          selector:
+            number:
+              min: 0
+              max: 300
+              step: 5
+              unit_of_measurement: s
+
+mode: single
+max_exceeded: silent
+
+variables:
+  doorbell: !input doorbell
+  camera: !input camera
+  apple_tv: !input apple_tv
+  wake_up: !input wake_up
+  link_form: !input link_form
+  website: !input website
+  link: >-
+    {{ ('halumar://open' if link_form == 'app' else website.rstrip('/') ~ '/open')
+       ~ '/camera/' ~ camera }}
+
+triggers:
+  - trigger: state
+    entity_id: !input doorbell
+
+conditions:
+  # Event entities change their state (a time stamp) on every ring; binary sensors turn on.
+  - condition: template
+    value_template: >-
+      {{ trigger.to_state is not none
+         and trigger.to_state.state not in ['unavailable', 'unknown']
+         and (trigger.from_state is none or trigger.from_state.state not in ['unavailable'])
+         and (doorbell.startswith('event.') or trigger.to_state.state == 'on') }}
+  - condition: template
+    value_template: "{{ wake_up or states(apple_tv) not in ['off', 'standby', 'unavailable', 'unknown'] }}"
+
+actions:
+  - if:
+      - condition: template
+        value_template: "{{ wake_up and states(apple_tv) in ['off', 'standby'] }}"
+    then:
+      - action: media_player.turn_on
+        target:
+          entity_id: !input apple_tv
+      - delay:
+          seconds: 3
+  - action: media_player.play_media
+    target:
+      entity_id: !input apple_tv
+    data:
+      media_content_type: url
+      media_content_id: "{{ link }}"
+  - delay:
+      seconds: !input cooldown

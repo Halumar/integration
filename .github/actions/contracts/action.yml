@@ -1,0 +1,57 @@
+# Provides the pinned contract (brand.json, schemas, fixtures, codegen and brand
+# tools) and exports CONTRACTS_DIR for the following steps.
+#
+# Halumar/contracts is checked out at the ref in .github/contracts-ref (a release
+# tag), also in the CI of forks. A git submodule under contracts/ is used instead
+# when present. Changing the pin is a reviewed commit in this repository.
+name: Contract checkout
+description: Check out the pinned contract and export CONTRACTS_DIR
+
+outputs:
+  dir:
+    description: Path of the contract checkout
+    value: ${{ steps.mode.outputs.dir }}
+
+runs:
+  using: composite
+  steps:
+    - id: mode
+      shell: bash
+      run: |
+        set -euo pipefail
+        if git config -f .gitmodules --get submodule.contracts.path >/dev/null 2>&1; then
+          echo "mode=submodule" >> "$GITHUB_OUTPUT"
+          echo "dir=contracts" >> "$GITHUB_OUTPUT"
+        else
+          ref="$(tr -d '[:space:]' < .github/contracts-ref)"
+          echo "mode=checkout" >> "$GITHUB_OUTPUT"
+          echo "dir=.contracts" >> "$GITHUB_OUTPUT"
+          echo "ref=${ref}" >> "$GITHUB_OUTPUT"
+        fi
+
+    - if: steps.mode.outputs.mode == 'submodule'
+      shell: bash
+      run: git submodule update --init --depth 1 contracts
+
+    - if: steps.mode.outputs.mode == 'checkout'
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        repository: Halumar/contracts
+        ref: ${{ steps.mode.outputs.ref }}
+        path: .contracts
+        persist-credentials: false
+
+    - shell: bash
+      env:
+        DIR: ${{ steps.mode.outputs.dir }}
+        REF: ${{ steps.mode.outputs.ref }}
+      run: |
+        set -euo pipefail
+        version="$(tr -d '[:space:]' < "${DIR}/VERSION")"
+        # A tag pin must name the version it contains (v<VERSION>).
+        if [[ "${REF}" == v* && "${REF}" != "v${version}" ]]; then
+          echo "::error file=.github/contracts-ref::Pinned ref ${REF} contains contract version ${version}."
+          exit 1
+        fi
+        echo "CONTRACTS_DIR=${DIR}" >> "$GITHUB_ENV"
+        echo "Contract ${version} (${REF:-submodule}) in ${DIR}"

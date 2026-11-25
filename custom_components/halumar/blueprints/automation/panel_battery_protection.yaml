@@ -1,0 +1,80 @@
+blueprint:
+  name: "Wall panel: keep the battery between two limits"
+  description: >-
+    Keeps the battery of a Halumar wall panel between two limits. The smart
+    plug of its charger turns on when the battery reaches the lower limit
+    and off when it reaches the upper limit; in between it stays as it is.
+    For tablets on permanent power, whose battery can swell when it is
+    always full.
+  domain: automation
+  author: Halumar
+  homeassistant:
+    min_version: "2025.11.0"
+  input:
+    battery_sensor:
+      name: "Wall panel battery"
+      description: "The Battery sensor of the panel's Halumar device."
+      selector:
+        entity:
+          filter:
+            - integration: halumar
+              domain: sensor
+              device_class: battery
+    charger:
+      name: "Smart plug"
+      description: "Switch that powers the panel's charger."
+      selector:
+        entity:
+          filter:
+            - domain:
+                - switch
+                - input_boolean
+    lower:
+      name: "Charge from"
+      description: "The plug turns on at or below this level."
+      default: 20
+      selector:
+        number:
+          min: 5
+          max: 50
+          step: 5
+          unit_of_measurement: "%"
+    upper:
+      name: "Charge up to"
+      description: "The plug turns off at or above this level."
+      default: 80
+      selector:
+        number:
+          min: 50
+          max: 100
+          step: 5
+          unit_of_measurement: "%"
+
+mode: queued
+max: 2
+
+variables:
+  battery: !input battery_sensor
+  lower: !input lower
+  upper: !input upper
+
+triggers:
+  - trigger: state
+    entity_id: !input battery_sensor
+  - trigger: homeassistant
+    event: start
+
+actions:
+  - variables:
+      level: "{{ states(battery) | float(-1) }}"
+  - choose:
+      - conditions: "{{ 0 <= level <= lower | float(20) }}"
+        sequence:
+          - action: homeassistant.turn_on
+            target:
+              entity_id: !input charger
+      - conditions: "{{ level >= upper | float(80) }}"
+        sequence:
+          - action: homeassistant.turn_off
+            target:
+              entity_id: !input charger

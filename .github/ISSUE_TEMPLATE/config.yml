@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/Halumar/integration/security/advisories/new
+    about: Please report vulnerabilities privately, not as a public issue.
+  - name: Help and questions
+    url: https://github.com/Halumar/integration/blob/main/docs/troubleshooting.md
+    about: Common problems and how to solve them.
+  - name: Documentation
+    url: https://github.com/Halumar/integration/blob/main/docs/README.md
+    about: Installation, configuration, entities, actions and events.
+  - name: Hub and editor issues
+    url: https://github.com/Halumar/hub/issues
+    about: Problems with the Halumar Hub app and its editor.

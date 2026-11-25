@@ -1,0 +1,5 @@
+# Tools the CI installs next to the test requirements (pinned; Dependabot proposes updates).
+ruff==0.15.9
+mypy==2.4.1
+pytest-cov==7.1.0
+pylint==4.1.4
